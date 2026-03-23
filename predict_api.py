@@ -18,6 +18,7 @@ def predict():
     gy = data["gy"]
     gz = data["gz"]
 
+    # Normalize
     ax = ax / 32768.0
     ay = ay / 32768.0
     az = az / 32768.0
@@ -26,18 +27,18 @@ def predict():
     gz = gz / 32768.0
 
     magnitude = np.sqrt(ax**2 + ay**2 + az**2)
-    gyro_mag = np.sqrt(gx**2 + gy**2 + gz**2)
 
-    X = [[ax, ay, az, gx, gy, gz, magnitude, gyro_mag]]
+    X = [[ax, ay, az, gx, gy, gz, magnitude]]
 
     prob = model.predict_proba(X)[0][1]
 
     print("Fall Probability:", prob)
 
-    if prob > 0.65:
+    # 🔴 STRICT THRESHOLD
+    if prob > 0.85:
         return "fall"
     else:
         return "normal"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=8000)
